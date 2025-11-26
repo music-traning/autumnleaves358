@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autumn Leaves Training</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Roboto+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <header class="main-header">
+            <h1 class="app-title">Autumn Leaves <span class="subtitle">Training</span></h1>
+        </header>
+
+        <main class="main-content">
+            <!-- Chord Display Section -->
+            <section class="chord-display-area">
+                <div class="current-chord">
+                    <span class="chord-name" id="current-chord-name">Cm7</span>
+                    <div class="chord-tones" id="chord-tones-display">
+                        <span class="tone tone-3rd">Eb (3rd)</span>
+                        <span class="tone tone-7th">Bb (7th)</span>
+                    </div>
+                </div>
+                <div class="next-chord">
+                    <span class="label">Next:</span>
+                    <span class="chord-name-small" id="next-chord-name">F7</span>
+                </div>
+            </section>
+
+            <!-- Fretboard Section -->
+            <section class="fretboard-container">
+                <div class="fretboard" id="fretboard">
+                    <!-- Strings -->
+                    <div class="string"></div>
+                    <div class="string"></div>
+                    <div class="string"></div>
+                    <div class="string"></div>
+                    <div class="string"></div>
+                    <div class="string"></div>
+
+                    <!-- Frets (12 frets, Equal Width ~8.33%) -->
+                    <div class="fret" style="left: 8.33%;"></div>
+                    <div class="fret" style="left: 16.66%;"></div>
+                    <div class="fret" style="left: 25.00%;"></div>
+                    <div class="fret" style="left: 33.33%;"></div>
+                    <div class="fret" style="left: 41.66%;"></div>
+                    <div class="fret" style="left: 50.00%;"></div>
+                    <div class="fret" style="left: 58.33%;"></div>
+                    <div class="fret" style="left: 66.66%;"></div>
+                    <div class="fret" style="left: 75.00%;"></div>
+                    <div class="fret" style="left: 83.33%;"></div>
+                    <div class="fret" style="left: 91.66%;"></div>
+                    <!-- 12th fret line is the right border -->
+
+                    <!-- Fret Numbers -->
+                    <div class="fret-number" style="left: 4.16%;">1</div>
+                    <div class="fret-number" style="left: 20.83%;">3</div>
+                    <div class="fret-number" style="left: 37.50%;">5</div>
+                    <div class="fret-number" style="left: 54.16%;">7</div>
+                    <div class="fret-number" style="left: 70.83%;">9</div>
+                    <div class="fret-number" style="left: 95.83%;">12</div>
+
+                    <!-- Fret Dots (Centered in frets 3, 5, 7, 9, 12) -->
+                    <div class="fret-dot" style="left: 20.83%;"></div> <!-- 3rd -->
+                    <div class="fret-dot" style="left: 37.50%;"></div> <!-- 5th -->
+                    <div class="fret-dot" style="left: 54.16%;"></div> <!-- 7th -->
+                    <div class="fret-dot" style="left: 70.83%;"></div> <!-- 9th -->
+                    <div class="fret-dot double" style="left: 95.83%; top: 25%;"></div> <!-- 12th top -->
+                    <div class="fret-dot double" style="left: 95.83%; top: 75%;"></div> <!-- 12th bottom -->
+
+                    <!-- Note Markers Container -->
+                    <div id="note-markers-container">
+                        <!-- Markers will be injected by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Controls Section -->
+            <section class="controls-area">
+                <div class="control-group">
+                    <label for="bpm-slider" class="control-label">BPM: <span id="bpm-display">80</span></label>
+                    <input type="range" id="bpm-slider" min="60" max="240" value="80" class="slider-gold">
+                </div>
+                <div class="control-group">
+                    <label for="volume-slider" class="control-label">Volume</label>
+                    <input type="range" id="volume-slider" min="-30" max="0" value="-10" class="slider-gold">
+                </div>
+                <div class="control-group">
+                    <label for="metronome-mode" class="control-label">Metronome</label>
+                    <select id="metronome-mode" class="select-gold">
+                        <option value="on">On-beat (1-2-3-4)</option>
+                        <option value="off">Off-beat (2-4)</option>
+                    </select>
+                </div>
+                <div class="button-group">
+                    <button id="btn-start" class="btn-gold">Start</button>
+                    <button id="btn-pause" class="btn-gold">Pause</button>
+                    <button id="btn-stop" class="btn-gold">Stop</button>
+                    <button id="btn-toggle-display" class="btn-gold">Show Degrees</button>
+                </div>
+            </section>
+
+            <!-- Full Chord Chart -->
+            <section class="chart-container">
+                <h2 class="chart-title">Progression Map</h2>
+                <div id="chord-chart" class="chord-chart">
+                    <!-- Injected by JS -->
+                </div>
+            </section>
+        </main>
+
+        <footer class="main-footer">
+            <p>&copy; 2025 buro</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
