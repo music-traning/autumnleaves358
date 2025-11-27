@@ -283,6 +283,31 @@ function init() {
             updateLoopVisuals();
         });
     }
+
+    // Modal Listeners
+    const modal = document.getElementById("manual-modal");
+    const btnHelp = document.getElementById("btn-help");
+    const btnModalClose = document.getElementById("btn-modal-close");
+
+    if (btnHelp && modal) {
+        btnHelp.addEventListener("click", () => {
+            modal.classList.remove("hidden");
+        });
+    }
+
+    if (btnModalClose && modal) {
+        btnModalClose.addEventListener("click", () => {
+            modal.classList.add("hidden");
+        });
+    }
+
+    if (modal) {
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) {
+                modal.classList.add("hidden");
+            }
+        });
+    }
 }
 
 function updateLoopVisuals() {

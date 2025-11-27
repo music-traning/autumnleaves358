@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual - Autumn Leaves 358</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f0f10;
+            --text-main: #e0e0e0;
+            --accent-3rd: #ffb347;
+            --accent-7th: #b19cd9;
+            --gold: #c5a059;
+            --glow-3rd: 0 0 10px rgba(255, 179, 71, 0.6);
+            --glow-7th: 0 0 10px rgba(177, 156, 217, 0.6);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Lato', sans-serif;
+            line-height: 1.8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+            border: 1px solid #333;
+            padding: 40px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+            background: radial-gradient(circle at center, #1a1a1c 0%, #0f0f10 100%);
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+        }
+
+        h1 {
+            color: var(--gold);
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
+            border-bottom: 1px solid var(--gold);
+            padding-bottom: 20px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            margin-top: -10px;
+            margin-bottom: 40px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        h2 {
+            color: var(--text-main);
+            font-size: 1.5rem;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            padding-left: 15px;
+            border-left: 3px solid var(--gold);
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            color: #ccc;
+        }
+
+        /* 重要語句のハイライト */
+        .highlight-3rd {
+            color: var(--accent-3rd);
+            font-weight: bold;
+            text-shadow: var(--glow-3rd);
+        }
+
+        .highlight-7th {
+            color: var(--accent-7th);
+            font-weight: bold;
+            text-shadow: var(--glow-7th);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 15px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        li::before {
+            content: "✦";
+            color: var(--gold);
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .loop-box {
+            border: 1px solid var(--gold);
+            padding: 20px;
+            margin: 30px 0;
+            background-color: rgba(197, 160, 89, 0.05);
+            text-align: center;
+        }
+
+        .loop-box h3 {
+            color: var(--gold);
+            margin-top: 0;
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #555;
+            border-top: 1px solid #333;
+            padding-top: 20px;
+        }
+
+        a {
+            color: var(--gold);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        a:hover {
+            text-shadow: 0 0 10px var(--gold);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Autumn Leaves 358</h1>
+        <div class="subtitle">Sculpt Your Ad-Lib with Guide Tones</div>
+
+        <p>
+            ようこそ、<strong>ぶろろろ</strong>の開発室へ。<br>
+            このアプリは、ジャズ・スタンダードの王道「枯葉（Autumn Leaves）」において、
+            アドリブの道しるべとなる<strong>「3度」と「7度」</strong>を視覚的にガイドするトレーニングツールです。
+        </p>
+
+        <h2>How to Use</h2>
+        <p>使い方はシンプルです。Playボタンを押すと伴奏が始まり、指板上のポジションが光ります。</p>
+
+        <ul>
+            <li>
+                <span class="highlight-3rd">Orange Light (3rd)</span><br>
+                コードの「3度」の音です。コードの明るさ・暗さを決定づける最も重要な音です。
+            </li>
+            <li>
+                <span class="highlight-7th">Purple Light (7th)</span><br>
+                コードの「7度」の音です。ジャズらしい響きを生む、おしゃれなスパイスです。
+            </li>
+        </ul>
+
+        <div class="loop-box">
+            <h3>🔄 Infinite Loop Mode</h3>
+            <p>
+                <strong>「苦手な場所を、逃がさない」</strong><br>
+                指板の上部の「小節バー」をクリック（タップ）してください。<br>
+                選択した小節だけを、永遠にループ再生します。<br>
+                ツーファイブ（ii-V）の手癖を覚えるまで、千本ノックが可能です。
+            </p>
+        </div>
+
+        <h2>Tips for Ad-Lib</h2>
+        <p>
+            ただ光を追うだけでなく、<strong>「7度から3度へつなぐ」</strong>ことを意識してみてください。<br>
+            前のコードの<span class="highlight-7th">紫の光</span>から、次のコードの<span class="highlight-3rd">オレンジの光</span>へ、
+            半音や全音で滑らかにつながるラインが見えるはずです。<br>
+            それがジャズの「美しいライン」の正体です。
+        </p>
+
+        <footer>
+            Created by Burororo<br>
+            Powered by AI & Jazz Spirit
+        </footer>
+    </div>
+
+</body>
+
+</html>

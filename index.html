@@ -20,6 +20,7 @@
     <div class="app-container">
         <header class="main-header">
             <h1 class="app-title">Autumn Leaves <span class="subtitle">Training</span></h1>
+            <button id="btn-help" class="btn-help" title="Manual">?</button>
         </header>
 
         <main class="main-content">
@@ -132,6 +133,14 @@
         <footer class="main-footer">
             <p>&copy; 2025 buro</p>
         </footer>
+    </div>
+
+    <!-- Manual Modal -->
+    <div id="manual-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button id="btn-modal-close" class="modal-close">&times;</button>
+            <iframe src="manual.html" class="modal-iframe"></iframe>
+        </div>
     </div>
 
     <script src="script.js"></script>
