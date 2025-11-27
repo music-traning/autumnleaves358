@@ -38,6 +38,24 @@ const autumnLeavesChords = [
     { bar: 32, chord: "Gm6", degree: "i/Gm" }
 ];
 
+// Key Definitions (Offset from Gm)
+const KEYS = {
+    "Gm": 0,
+    "Am": 2,
+    "Bm": 4,
+    "Cm": 5,
+    "Dm": 7,
+    "Em": 9,
+    "Fm": 10,
+    "G#m": 1,
+    "Bbm": 3,
+    "C#m": 6,
+    "F#m": 11,
+    "Ebm": 8
+};
+
+let currentKey = "Gm";
+
 // Note Definitions
 const NOTES_SHARP = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 const NOTES_FLAT = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
@@ -52,6 +70,46 @@ const NOTE_INDEX = {
     "A": 9, "A#": 10, "Bb": 10,
     "B": 11
 };
+
+function transposeNote(note, interval) {
+    const idx = NOTE_INDEX[note];
+    if (idx === undefined) return note;
+    let newIdx = (idx + interval) % 12;
+    // Simple logic: use Flats for most jazz keys unless specific sharp keys
+    // For simplicity, let's default to Flats for now, or check key signature.
+    // Let's use NOTES_FLAT for everything to keep it simple for jazz context (Bb, Eb, etc.)
+    return NOTES_FLAT[newIdx];
+}
+
+function transposeChord(chordName, interval) {
+    if (interval === 0) return chordName;
+
+    let root, quality;
+    if (chordName.length > 1 && (chordName[1] === 'b' || chordName[1] === '#')) {
+        root = chordName.substring(0, 2);
+        quality = chordName.substring(2);
+    } else {
+        root = chordName.substring(0, 1);
+        quality = chordName.substring(1);
+    }
+
+    const newRoot = transposeNote(root, interval);
+    return newRoot + quality;
+}
+
+function getTransposedChords() {
+    const interval = KEYS[currentKey];
+    if (interval === 0) return autumnLeavesChords;
+
+    return autumnLeavesChords.map(c => {
+        let newChord = { ...c };
+        newChord.chord = transposeChord(c.chord, interval);
+        if (c.next) {
+            newChord.next = transposeChord(c.next, interval);
+        }
+        return newChord;
+    });
+}
 
 /**
  * Parses a chord name and returns its constituent notes and guide tones (3rd, 7th).
@@ -284,6 +342,16 @@ function init() {
         });
     }
 
+    // Key Selector
+    const elKeySelect = document.getElementById("key-select");
+    if (elKeySelect) {
+        elKeySelect.addEventListener("change", (e) => {
+            currentKey = e.target.value;
+            generateChordChart();
+            updateUI(currentBar, currentBeat);
+        });
+    }
+
     // Modal Listeners
     const modal = document.getElementById("manual-modal");
     const btnHelp = document.getElementById("btn-help");
@@ -328,8 +396,10 @@ function generateChordChart() {
 
     chartContainer.innerHTML = "";
 
+    const chords = getTransposedChords();
+
     for (let i = 1; i <= 32; i++) {
-        const barData = autumnLeavesChords.find(c => c.bar === i);
+        const barData = chords.find(c => c.bar === i);
         let chordDisplay = "";
 
         if (barData) {
@@ -350,17 +420,40 @@ function generateChordChart() {
         `;
 
         // Click to Select (Set Position)
-        barEl.addEventListener("click", () => {
-            // Stop if playing
-            if (isPlaying || Tone.Transport.state !== "stopped") {
-                isPlaying = false;
-                Tone.Transport.stop();
-                countInBeats = 0; // Reset count-in for fresh start
-            }
+        barEl.addEventListener("click", (e) => {
+            if (e.shiftKey) {
+                // Shift-Click: Set Loop Range
+                let start = Math.min(currentBar, i);
+                let end = Math.max(currentBar, i);
 
-            currentBar = i;
-            currentBeat = 1;
-            updateUI(currentBar, currentBeat);
+                loopStart = start;
+                loopEnd = end;
+
+                // Update Inputs
+                if (elLoopStart) elLoopStart.value = loopStart;
+                if (elLoopEnd) elLoopEnd.value = loopEnd;
+
+                // Enable Loop
+                isLooping = true;
+                if (btnLoopToggle) {
+                    btnLoopToggle.textContent = "Loop: ON";
+                    btnLoopToggle.classList.add("loop-active");
+                }
+
+                updateLoopVisuals();
+            } else {
+                // Normal Click: Set Position
+                // Stop if playing
+                if (isPlaying || Tone.Transport.state !== "stopped") {
+                    isPlaying = false;
+                    Tone.Transport.stop();
+                    countInBeats = 0; // Reset count-in for fresh start
+                }
+
+                currentBar = i;
+                currentBeat = 1;
+                updateUI(currentBar, currentBeat);
+            }
         });
 
         chartContainer.appendChild(barEl);
@@ -475,7 +568,8 @@ function repeatLoop(time) {
     }
 
     // 2. Chord Logic
-    const chordData = autumnLeavesChords.find(c => c.bar === currentBar);
+    const chords = getTransposedChords();
+    const chordData = chords.find(c => c.bar === currentBar);
     if (chordData) {
         let chordName = chordData.chord;
         let duration = "1m"; // Default 1 measure (4 beats)
@@ -553,7 +647,8 @@ function updateUI(bar, beat) {
     }
 
     // Find chord data for current bar
-    const chordData = autumnLeavesChords.find(c => c.bar === bar);
+    const chords = getTransposedChords();
+    const chordData = chords.find(c => c.bar === bar);
     if (!chordData) return;
 
     // Handle Split Bars (27, 28)
@@ -584,7 +679,7 @@ function updateUI(bar, beat) {
         nextChordName = chordData.next;
     } else {
         // Look at next bar
-        const nextData = autumnLeavesChords.find(c => c.bar === nextBar);
+        const nextData = chords.find(c => c.bar === nextBar);
         nextChordName = nextData ? nextData.chord : "???";
     }
 
