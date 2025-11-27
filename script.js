@@ -184,6 +184,11 @@ let bpm = 80;
 let displayMode = "note"; // "note" or "degree"
 let countInBeats = 0;
 
+// Loop State
+let isLooping = false;
+let loopStart = 1;
+let loopEnd = 32;
+
 // Tone.js Instruments
 let polySynth, membrane, metal;
 let loopId = null;
@@ -201,6 +206,11 @@ const btnStart = document.getElementById("btn-start");
 const btnPause = document.getElementById("btn-pause");
 const btnStop = document.getElementById("btn-stop");
 const btnToggleDisplay = document.getElementById("btn-toggle-display");
+
+// Loop Elements
+const elLoopStart = document.getElementById("loop-start");
+const elLoopEnd = document.getElementById("loop-end");
+const btnLoopToggle = document.getElementById("btn-loop-toggle");
 
 // Initialize
 function init() {
@@ -239,6 +249,52 @@ function init() {
             updateUI(currentBar, currentBeat);
         });
     }
+
+    // Loop Listeners
+    if (elLoopStart) {
+        elLoopStart.addEventListener("change", (e) => {
+            let val = parseInt(e.target.value);
+            if (val < 1) val = 1;
+            if (val > 32) val = 32;
+            if (val > loopEnd) val = loopEnd; // Enforce Start <= End
+            loopStart = val;
+            elLoopStart.value = loopStart;
+            updateLoopVisuals();
+        });
+    }
+
+    if (elLoopEnd) {
+        elLoopEnd.addEventListener("change", (e) => {
+            let val = parseInt(e.target.value);
+            if (val < 1) val = 1;
+            if (val > 32) val = 32;
+            if (val < loopStart) val = loopStart; // Enforce End >= Start
+            loopEnd = val;
+            elLoopEnd.value = loopEnd;
+            updateLoopVisuals();
+        });
+    }
+
+    if (btnLoopToggle) {
+        btnLoopToggle.addEventListener("click", () => {
+            isLooping = !isLooping;
+            btnLoopToggle.textContent = isLooping ? "Loop: ON" : "Loop: OFF";
+            btnLoopToggle.classList.toggle("loop-active", isLooping);
+            updateLoopVisuals();
+        });
+    }
+}
+
+function updateLoopVisuals() {
+    const bars = document.querySelectorAll(".chord-bar");
+    bars.forEach(bar => {
+        const barNum = parseInt(bar.querySelector(".bar-num").textContent);
+        if (isLooping && barNum >= loopStart && barNum <= loopEnd) {
+            bar.classList.add("in-loop-range");
+        } else {
+            bar.classList.remove("in-loop-range");
+        }
+    });
 }
 
 function generateChordChart() {
@@ -268,19 +324,23 @@ function generateChordChart() {
             <span class="chord-text">${chordDisplay}</span>
         `;
 
-        // Click to Start
+        // Click to Select (Set Position)
         barEl.addEventListener("click", () => {
+            // Stop if playing
+            if (isPlaying || Tone.Transport.state !== "stopped") {
+                isPlaying = false;
+                Tone.Transport.stop();
+                countInBeats = 0; // Reset count-in for fresh start
+            }
+
             currentBar = i;
             currentBeat = 1;
             updateUI(currentBar, currentBeat);
-
-            if (Tone.Transport.state !== "started") {
-                startPractice();
-            }
         });
 
         chartContainer.appendChild(barEl);
     }
+    updateLoopVisuals(); // Apply visuals if needed
 }
 
 async function startPractice() {
@@ -309,9 +369,23 @@ async function startPractice() {
         metal.volume.value = -15;
     }
 
+    // Resume if paused
+    if (Tone.Transport.state === "paused") {
+        isPlaying = true;
+        Tone.Transport.start();
+        return;
+    }
+
     isPlaying = true;
     countInBeats = 4; // Start with 4 count-in
     Tone.Transport.bpm.value = bpm;
+
+    // Enforce Loop Start
+    if (isLooping) {
+        currentBar = loopStart;
+        currentBeat = 1;
+        updateUI(currentBar, currentBeat);
+    }
 
     // Schedule Loop
     if (loopId !== null) {
@@ -323,16 +397,23 @@ async function startPractice() {
 }
 
 function pausePractice() {
+    if (!isPlaying) return;
     isPlaying = false;
-    Tone.Transport.stop();
-    countInBeats = 0;
+    Tone.Transport.pause();
+    // Do NOT reset countInBeats or clear UI here
 }
 
 function stopPractice() {
-    pausePractice();
+    isPlaying = false;
+    Tone.Transport.stop();
+    countInBeats = 0;
     currentBar = 1;
     currentBeat = 1;
     updateUI(currentBar, currentBeat);
+
+    // Clear any visual count-in text if stopped during count-in
+    elCurrentChord.textContent = "Cm7"; // Reset to start
+    elNextChord.textContent = "F7";
 }
 
 function repeatLoop(time) {
@@ -403,8 +484,16 @@ function repeatLoop(time) {
     if (currentBeat > 4) {
         currentBeat = 1;
         currentBar++;
-        if (currentBar > 32) {
-            currentBar = 1;
+
+        // Loop Logic
+        if (isLooping) {
+            if (currentBar > loopEnd) {
+                currentBar = loopStart;
+            }
+        } else {
+            if (currentBar > 32) {
+                currentBar = 1;
+            }
         }
     }
 }
