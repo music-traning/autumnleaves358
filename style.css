@@ -837,3 +837,493 @@ body {
     border: none;
     border-radius: 8px;
 }
+
+/* =========================================
+   1. Variables & Reset (The Foundation)
+   ========================================= */
+:root {
+    --gold: #d4af37;       /* ジャズらしい渋い金 */
+    --gold-dim: #8a7224;   /* ホバー時などの暗めの金 */
+    --bg-dark: #121212;    /* 深い漆黒 */
+    --bg-panel: #1e1e1e;   /* パネル背景 */
+    --text-main: #e0e0e0;
+    --text-muted: #888;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto Mono', monospace;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* =========================================
+   2. Layout Container
+   ========================================= */
+.app-container {
+    width: 100%;
+    max-width: 1000px; /* 練習に集中できる最適な幅 */
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* =========================================
+   3. Header
+   ========================================= */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #333;
+    margin-bottom: 1.5rem;
+}
+
+.app-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    margin: 0;
+    color: var(--gold);
+    line-height: 1.2;
+}
+
+.app-title .subtitle {
+    font-size: 0.9rem;
+    color: var(--text-main);
+    font-weight: normal;
+    font-family: 'Roboto Mono', monospace;
+    opacity: 0.8;
+}
+
+.btn-help {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    background: transparent;
+    color: var(--gold);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-help:hover {
+    background: var(--gold);
+    color: var(--bg-dark);
+}
+
+/* =========================================
+   4. Chord Display Area
+   ========================================= */
+.chord-display-area {
+    background: var(--bg-panel);
+    padding: 2rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between; /* 左右に配置 */
+    align-items: center;
+    border-left: 4px solid var(--gold);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.current-chord {
+    text-align: left;
+}
+
+.chord-name {
+    display: block;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.chord-tones {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.tone {
+    display: inline-block;
+    margin-right: 10px;
+    background: #333;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.next-chord {
+    text-align: right;
+    background: rgba(0,0,0,0.2);
+    padding: 1rem;
+    border-radius: 6px;
+}
+
+.next-chord .label {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.chord-name-small {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+/* =========================================
+   5. Fretboard (The Responsive Magic)
+   ========================================= */
+.fretboard-container {
+    width: 100%;
+    margin-bottom: 2rem;
+    /* 重要: スマホで指板が潰れないようにスクロール可能にする */
+    overflow-x: auto;
+    background: #000;
+    padding: 20px 0; /* 上下に余白 */
+    border-radius: 6px;
+    border: 1px solid #333;
+}
+
+.fretboard {
+    position: relative;
+    /* 最小幅を確保。これより狭い画面ではスクロールバーが出る */
+    min-width: 800px; 
+    height: 180px; 
+    margin: 0 auto;
+    /* 木目調ではなくモダンなダークグラデーション */
+    background: linear-gradient(to bottom, #2a2a2a, #1a1a1a);
+}
+
+/* 弦 */
+.string {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px; /* 低音弦を太く見せる装飾はCSS疑似要素等で可能だが今回はシンプルに */
+    background: #777;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+/* 6本の弦を配置 (top位置) */
+.string:nth-child(1) { top: 16.66%; height: 1px; } /* 1弦 */
+.string:nth-child(2) { top: 30.00%; height: 1px; }
+.string:nth-child(3) { top: 43.33%; height: 2px; }
+.string:nth-child(4) { top: 56.66%; height: 2px; }
+.string:nth-child(5) { top: 70.00%; height: 3px; }
+.string:nth-child(6) { top: 83.33%; height: 3px; } /* 6弦 */
+
+/* フレットバー */
+.fret {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #555;
+    border-right: 1px solid #111;
+}
+
+/* フレット番号 */
+.fret-number {
+    position: absolute;
+    bottom: -25px; /* 指板の下に配置 */
+    font-size: 0.7rem;
+    color: #555;
+    transform: translateX(-50%);
+}
+
+/* ポジションマーク */
+.fret-dot {
+    position: absolute;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    background: #444;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: inset 0 0 4px #000;
+}
+.fret-dot.double {
+    /* 12フレット用はHTML側のinline styleでtop制御 */
+}
+
+/* 動的に生成される音符マーカー */
+.note-marker {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background: var(--gold);
+    color: #000;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    box-shadow: 0 0 5px var(--gold);
+}
+
+/* =========================================
+   6. Controls Area (Grid Layout)
+   ========================================= */
+.controls-area {
+    display: grid;
+    /* カラムの自動調整：最小130px、入るだけ並べる */
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 1.5rem;
+    background: var(--bg-panel);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ループ設定は横長なので2カラム分またぐ（スペースがあれば） */
+.loop-controls {
+    grid-column: span 2;
+}
+@media (max-width: 600px) {
+    .loop-controls { grid-column: span 1; }
+}
+
+.control-label {
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 入力・選択要素のデザイン */
+.slider-gold {
+    width: 100%;
+    accent-color: var(--gold); /* モダンブラウザ用 */
+    cursor: pointer;
+}
+
+.select-gold, .input-gold-small {
+    background: #111;
+    border: 1px solid #444;
+    color: var(--gold);
+    padding: 8px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+.input-gold-small {
+    text-align: center;
+    width: 60px; /* 数字入力用 */
+}
+
+.loop-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.5rem;
+}
+
+/* ボタンエリア */
+.button-group {
+    grid-column: 1 / -1; /* 全幅 */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    padding-top: 1rem;
+    border-top: 1px solid #333;
+}
+
+.btn-gold, .btn-gold-small {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 10px 24px;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 44px; /* タッチターゲット確保 */
+}
+.btn-gold:hover, .btn-gold-small:hover {
+    background: var(--gold);
+    color: #000;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+}
+.btn-gold-small {
+    padding: 5px 15px;
+    font-size: 0.8rem;
+    width: 100%; /* ループボタンは親に合わせて広げる */
+}
+
+/* =========================================
+   7. Chart Container
+   ========================================= */
+.chart-container {
+    background: var(--bg-panel);
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.chart-title {
+    margin-top: 0;
+    font-size: 1.2rem;
+    border-bottom: 2px solid #333;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.chord-chart {
+    display: grid;
+    /* デスクトップ：4小節区切り */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.chart-bar {
+    /* JSで挿入される要素と想定 */
+    background: #252525;
+    padding: 12px;
+    text-align: center;
+    border-radius: 4px;
+    border: 1px solid #333;
+    font-size: 0.9rem;
+}
+.chart-bar.current {
+    /* 現在再生中のハイライト */
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--gold);
+}
+
+/* =========================================
+   8. Footer
+   ========================================= */
+.main-footer {
+    margin-top: auto; /* 最下部に押し下げ */
+    padding: 2rem 0;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #555;
+    border-top: 1px solid #222;
+}
+
+.main-footer a {
+    color: #777;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+.main-footer a:hover {
+    color: var(--gold);
+}
+
+/* =========================================
+   9. Modals & Utilities
+   ========================================= */
+.hidden {
+    display: none !important;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.modal-content {
+    background: #fff;
+    width: 100%;
+    max-width: 800px;
+    height: 80vh;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #333;
+    z-index: 10;
+}
+
+.modal-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* =========================================
+   10. Responsive Breakpoints
+   ========================================= */
+
+/* タブレット (768px以下) */
+@media (max-width: 768px) {
+    .chord-chart {
+        grid-template-columns: repeat(2, 1fr); /* 2小節区切り */
+    }
+}
+
+/* モバイル (600px以下) */
+@media (max-width: 600px) {
+    .app-title {
+        font-size: 1.5rem;
+    }
+    .app-title .subtitle {
+        display: block; /* 改行 */
+        margin-top: 5px;
+    }
+
+    /* コード表示を縦積みに */
+    .chord-display-area {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+        padding: 1.5rem 1rem;
+    }
+    .current-chord {
+        text-align: center;
+    }
+    .next-chord {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* コントロール周り */
+    .btn-gold {
+        width: 100%; /* ボタンを押しやすく全幅に */
+    }
+    
+    .chart-container {
+        padding: 1rem;
+    }
+}
